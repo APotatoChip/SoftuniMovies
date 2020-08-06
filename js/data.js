@@ -1,3 +1,6 @@
+import { beginRequest, endRequest } from "./notifications.js";
+
+
 function host(endpoint) {
     return `http://api.backendless.com/816FEF6B-E790-E7A4-FF23-C88FDF2D8200/86F598A4-E405-4CEC-A298-1E61EB9BE9EC/${endpoint}`;
 }
@@ -9,9 +12,10 @@ const endpoints = {
     MOVIES: 'data/movies',
     MOVIE_BY_ID: 'data/movies/'
 };
-async function register(username, password) {
-   
 
+export async function register(username, password) {
+
+    beginRequest();
     const result = (await fetch(host(endpoints.REGISTER), {
         method: 'POST',
         headers: {
@@ -23,14 +27,15 @@ async function register(username, password) {
         })
     })).json();
 
-    
+    endRequest();
 
     return result;
 }
 
-async function login(username, password) {
-    
 
+export async function login(username, password) {
+
+    beginRequest();
     const result = await (await fetch(host(endpoints.LOGIN), {
         method: 'POST',
         headers: {
@@ -46,33 +51,36 @@ async function login(username, password) {
     localStorage.setItem('username', result.username);
     localStorage.setItem('userId', result.objectId);
 
-  
+    endRequest();
 
     return result;
 }
 
-async function logout() {
-  
+export async function logout() {
+
+    beginRequest();
 
     const token = localStorage.getItem('userToken');
-
     localStorage.removeItem('userToken');
-
-    const result = fetch(host(endpoints.LOGOUT), {
+    const result= fetch(host(endpoints.LOGOUT), {
         headers: {
             'user-token': token
         }
     });
 
-   
+
+    endRequest();
 
     return result;
+
 }
 
 // get all movies
-async function getMovies(search) {
-    
 
+export async function getMovies(search) {
+
+
+    beginRequest();
     const token = localStorage.getItem('userToken');
 
     let result;
@@ -90,15 +98,16 @@ async function getMovies(search) {
             }
         })).json();
     }
-
+    endRequest();
 
     return result;
 }
 
 // get movie by ID
-async function getMovieById(id) {
 
+export async function getMovieById(id) {
 
+    beginRequest();
     const token = localStorage.getItem('userToken');
 
     const result = (await fetch(host(endpoints.MOVIE_BY_ID + id), {
@@ -107,15 +116,17 @@ async function getMovieById(id) {
         }
     })).json();
 
- 
+
+    endRequest();
 
     return result;
 }
 
 // create movie
-async function createMovie(movie) {
-   
 
+export async function createMovie(movie) {
+
+    beginRequest();
     const token = localStorage.getItem('userToken');
 
     const result = (await fetch(host(endpoints.MOVIES), {
@@ -126,15 +137,16 @@ async function createMovie(movie) {
         },
         body: JSON.stringify(movie)
     })).json();
+    endRequest();
 
-   
     return result;
 }
 
 // edit movie
-async function updateMovie(id, updatedProps) {
-    
 
+export async function updateMovie(id, updatedProps) {
+
+    beginRequest();
     const token = localStorage.getItem('userToken');
 
     const result = (await fetch(host(endpoints.MOVIE_BY_ID + id), {
@@ -146,15 +158,16 @@ async function updateMovie(id, updatedProps) {
         body: JSON.stringify(updatedProps)
     })).json();
 
- 
+    endRequest();
 
     return result;
 }
 
 // delete movie
-async function deleteMovie(id) {
-    
 
+export async function deleteMovie(id) {
+
+    beginRequest();
     const token = localStorage.getItem('userToken');
 
     const result = (await fetch(host(endpoints.MOVIE_BY_ID + id), {
@@ -164,15 +177,16 @@ async function deleteMovie(id) {
             'user-token': token
         }
     })).json();
+    endRequest();
 
-   
 
     return result;
 }
 
 // get movies by user ID
-async function getMovieByOwner() {
-   
+
+export async function getMovieByOwner() {
+    beginRequest();
 
     const token = localStorage.getItem('userToken');
     const ownerId = localStorage.getItem('userId');
@@ -184,13 +198,14 @@ async function getMovieByOwner() {
         }
     })).json();
 
-    
+    endRequest();
 
     return result;
 }
 
 // buy ticket
-async function buyTicket(movie) {
+
+export async function buyTicket(movie) {
     const newTickets = movie.tickets - 1;
     const movieId = movie.objectId;
 
